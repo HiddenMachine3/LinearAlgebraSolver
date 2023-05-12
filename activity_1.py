@@ -25,7 +25,8 @@ class Matrix:
             self.c = c
 
     def display(self):
-        print(np.array_str(self.elements))  # , precision=3, suppress_small=True))
+        # print(np.array_str(self.elements))  # , precision=3, suppress_small=True))
+        print(np.array_str(self.elements, max_line_width=np.inf, precision=3, suppress_small=True))
 
     def transpose(self):
         r = self.c
@@ -175,36 +176,38 @@ B = Matrix(np.array([
     [1, -1, 2, 0, 1]
 ]))
 
-print("A:")
-A.display()
-print("B:")
-B.display()
 
-print("1. AB")
-Matrix.mult(A, B).display()
+if __name__ == "__main__":
+    print("A:")
+    A.display()
+    print("B:")
+    B.display()
 
-print("2. A + B")
-Matrix.add(A, B).display()
+    print("1. AB")
+    Matrix.mult(A, B).display()
 
-print("3. 2A + 5B")
-Matrix.add(Matrix.scalar_mult(2, A), Matrix.scalar_mult(5, B)).display()
+    print("2. A + B")
+    Matrix.add(A, B).display()
 
-print("4. A transpose")
-A.transpose().display()
+    print("3. 2A + 5B")
+    Matrix.add(Matrix.scalar_mult(2, A), Matrix.scalar_mult(5, B)).display()
 
-print("5. \n")
-print("A^−1:")
-try:
-    Matrix.inverse(A).display()
-except MatrixError as e:
-    print(e.args[0])
-print("B^−1:")
-try:
-    Matrix.inverse(B).display()
-except MatrixError as e:
-    print(e.args[0])
-print("(AB)^−1:")
-try:
-    Matrix.inverse(Matrix.mult(A, B)).display()
-except MatrixError as e:
-    print(e.args[0])
+    print("4. A transpose")
+    A.transpose().display()
+
+    print("5. \n")
+    print("A^−1:")
+    try:
+        Matrix.inverse(A).display()
+    except MatrixError as e:
+        print(e.args[0])
+    print("B^−1:")
+    try:
+        Matrix.inverse(B).display()
+    except MatrixError as e:
+        print(e.args[0])
+    print("(AB)^−1:")
+    try:
+        Matrix.inverse(Matrix.mult(A, B)).display()
+    except MatrixError as e:
+        print(e.args[0])
