@@ -341,6 +341,3 @@ if __name__ == "__main__":
 
     except MatrixError as error:
         print(error.args[0])
-
-# y = Matrix.mult(Matrix.inverse(L),b)
-# y.display()
