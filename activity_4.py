@@ -1,6 +1,6 @@
 import numpy as np
-from activity_1 import Matrix
-from activity_1 import MatrixError
+from activity_3 import Matrix
+from activity_3 import MatrixError
 
 
 class MatrixSolver:
@@ -269,8 +269,6 @@ xi = (yi - (U[i,3]*x3 +U[i,2]*x2 +U[i,1]*x1))/U[i,i]        3   2   1
 1 4 -1
 3 -2 1
 """
-
-
 
 if __name__ == "__main__":
     A = Matrix(np.array([
