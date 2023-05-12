@@ -2,13 +2,6 @@ import numpy as np
 from activity_1 import Matrix
 from activity_1 import MatrixError
 
-"""
-1.converting to row echelon form
-2.converting to reduced row echelon form
-    a.making all the leading non-zero numbers equal to 1
-    b.making the columns containing the leading coefficients to be equal to zero except the leading coefficient itself
-"""
-
 
 class MatrixSolver:
     def __init__(self, matrix: np.ndarray, r: int = None, c: int = None):
@@ -205,8 +198,69 @@ class MatrixSolver:
                     break  # break from the inner loop
         return L, self.matrix
 
+    @staticmethod
+    def solveLy(L: np.ndarray, b: np.ndarray):  # Ly = b
+        y = np.empty(b.shape)
+        y[0, 0] = b[0, 0] / L[0, 0]
+        r, c = b.shape
+        for i in range(1, r):
+            # y[i, 0] = (b[i] - y[i - 1, 0] * L[i, 0]) / L[i, i]
+            # yi = (bi - (L[i,0]*y0 + L[i,1]*y1 + ...))/L[i,i]
+            y[i, 0] = b[i]
+
+            for j in range(0, i):
+                y[i, 0] -= L[i, j] * y[j, 0]
+
+            y[i, 0] /= L[i, i]
+
+        return y
+
+    @staticmethod
+    def solveUx(U: np.ndarray, y: np.ndarray):
+        r, c = U.shape
+        x = np.empty(y.shape)
+        x[r - 1, 0] = y[r - 1, 0] / U[r - 1, c - 1]
+
+        for i in range(r - 2, -1, -1):
+            # xi = (yi - (U[i,3]*x3 +U[i,2]*x2 +U[i,1]*x1))/U[i,i]
+            x[i, 0] = y[i, 0]
+
+            for j in range(r - 1, i, -1):
+                x[i, 0] -= U[i, j] * x[j, 0]
+
+            x[i, 0] /= U[i, i]
+
+        return x
+
 
 """
+
+15
+-9
+-23
+33
+11
+
+1 0 0   y0  b0
+2 1 0   y1  b1
+3 2 1   y2  b2
+
+y0 = b0/L[0,0]
+y1 = (b1 - L[1,0]*y0)/L[1,1]
+y2 = (b2 - L[2,0]*y0 - L[2,1]*y1)/L[2,2]
+yi = (bi - (L[i,0]*y0 + L[i,1]*y1 + ...))/L[i,i]
+
+1 2 3   x0  y0
+0 1 2   x1  y1
+0 0 1   x2  y2
+
+x2 = y2/U[2,2]
+x1 = (y1 - U[1,2]*x2)/U[1,1]            2
+x0 = (y0 - U[0,2]*x2 - U[0,1]*x1)/U[0,0]        2   1
+xi = (yi - (U[i,3]*x3 +U[i,2]*x2 +U[i,1]*x1))/U[i,i]        3   2   1
+        j=r-2
+
+
 [[ 6.8 -1.  -1.6]
  [-0.2 -1.   0.4]
  [-2.8  1.   0.6]]
@@ -265,16 +319,28 @@ if __name__ == "__main__":
         L.display()
         print("U:", end="")
         U.display()
+        print("b : ")
+        b.display()
 
         print("\n\nAx = b ==> LUx =b ==> Ux=y ==> Ly = b")
-        print("y = (L^-1)b")
-        y = Matrix.mult(Matrix.inverse(L), b)
-        print("y:", end="")
+        y = Matrix(MatrixSolver.solveLy(L.elements, b.elements))
+        print("Solving Ly=b\ny:", end="")
         y.display()
-        print("x=(U^-1)y")
-        x = Matrix.mult(Matrix.inverse(U), y)
-        print("x:", end="")
+        # cross checking: y=(L^-1)b
+        # y = Matrix.mult(Matrix.inverse(L),b)
+        # y.display()
+
+        x = Matrix(MatrixSolver.solveUx(U.elements, y.elements))
+        print("Solving Ux=y\nx:", end="")
         x.display()
+
+        # cross checking:         x=(U^-1)y
+        # x = Matrix.mult(Matrix.inverse(U), y)
+        # x.display()
+
 
     except MatrixError as error:
         print(error.args[0])
+
+# y = Matrix.mult(Matrix.inverse(L),b)
+# y.display()
