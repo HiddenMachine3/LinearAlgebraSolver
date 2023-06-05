@@ -171,20 +171,54 @@ class MatrixSolver:
 
     @staticmethod
     def proj(v1:np.ndarray, v2:np.ndarray):
-        return v1*(MatrixSolver.dot(v1,v2)/MatrixSolver.dot(v1,v1))
+        return v1*(np.dot(v1,v2)/np.dot(v1,v1))
 
     @staticmethod
     def orthonormal_basis_set(x:np.ndarray):
         v = x.copy()
-        for i in range(1,v.shape[0]):
+        print(v)
+        for i in range(1,3):
             for j in range(i-1):
                 v[i] = np.subtract(v[i],MatrixSolver.proj(v[j],x[i]))
+
+
+        print(v)
         return v
 
+    @staticmethod
+    def mult(a:np.ndarray, b:np.ndarray):
+        resElements = np.ndarray((3, 3))
+
+        for i in range(3):
+            for j in range(3):
+                sum = 0
+                for k in range(3):
+                    sum += a[i,k] * b[k,j]
+                resElements[i,j] = sum
+        return resElements
 
     def orthogonalDiagonalization(self):
         eig_values,eig_vecs = np.linalg.eig(self.matrix)
+        D = np.diag(eig_values)
+        Q, R = np.linalg.qr(A)
         print(MatrixSolver.orthonormal_basis_set(eig_vecs))
+
+        print("Q:")
+        MatrixSolver(Q).display()
+        print("R:")
+        MatrixSolver(R).display()
+        print("D:")
+        MatrixSolver(D).display()
+        print("RHS : ")
+
+        res = np.dot(np.dot(Q, A), np.transpose(Q))
+        MatrixSolver(res).display()
+
+
+        print("R:")
+        R= MatrixSolver.mult(np.transpose(Q),A)
+        print(R)
+
 
 
 
